@@ -8,6 +8,7 @@ from app.actions.applications.models import ApplicationCreate
 from app.actions.applications.models import ApplicationUpdate
 from app.models.db.applications import ApplicationModel
 from fastapi import APIRouter
+from fastapi import HTTPException
 
 router = APIRouter()
 
@@ -23,14 +24,17 @@ async def fetch_app_chats(app_token: str):
     pass
 
 
-@router.post("/", status_code=HTTPStatus.CREATED)
+@router.post("/", status_code=HTTPStatus.CREATED, response_model=Application)
 async def create_app(application: ApplicationCreate):
     return await add_application(application.name)
 
 
-@router.patch("/{app_token}")
+@router.patch("/{app_token}", response_model=Application)
 async def update_app(app_token: str, application_update: ApplicationUpdate):
-    return await update_application(app_token, application_update)
+    try:
+        return await update_application(app_token, application_update)
+    except Exception as e:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND)
 
 
 # FIXME: this should be removed just for testing

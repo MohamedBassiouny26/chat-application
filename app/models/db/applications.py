@@ -60,7 +60,9 @@ class ApplicationModel:
                 **updated_application.model_dump(exclude_unset=True, exclude_none=True)
             )
         )
-        await db.execute(query=query)
+        updated = await db.execute(query=query)
+        if not updated:
+            return None
         query = application_table.select().where(application_table.c.token == app_token)
         application = await db.fetch_one(query=query)
         return Application(**dict(application)) if application else None

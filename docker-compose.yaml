@@ -5,6 +5,7 @@ services:
     container_name: chat-service
     build:
       context: .
+    restart: always
     depends_on:
       - db
     ports:

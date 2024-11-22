@@ -1,12 +1,9 @@
 from http import HTTPStatus
 
 from app.actions.applications.main import update_application
-from app.actions.applications.models import Application
-from app.actions.applications.models import ApplicationCreate
 from app.actions.applications.models import ApplicationUpdate
 from app.actions.chats.main import create_chat_by_app
 from app.actions.chats.models import ChatCreate
-from app.models.db.applications import ApplicationModel
 from app.models.db.chats import ChatModel
 from fastapi import APIRouter
 
