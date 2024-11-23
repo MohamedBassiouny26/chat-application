@@ -10,10 +10,8 @@ router = APIRouter()
 
 @router.post("/", status_code=HTTPStatus.CREATED)
 async def create_message(message: MessageCreate):
-    return await create_message_action(message)
-
-
-# FIXME: this should be removed just for testing
+    message = await create_message_action(message)
+    return message.model_dump(exclude=["id", "chat_id"])
 
 
 @router.get("")

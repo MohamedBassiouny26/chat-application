@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -9,5 +11,5 @@ class MessageCreate(BaseModel):
 
 class Message(BaseModel):
     body: str
-    chat_id: int
+    chat_id: Optional[int] = None
     number: int

@@ -1,10 +1,10 @@
-import uuid
-from random import randint
 from typing import List
 
 from app.actions.chats.models import Chat
 from app.actions.chats.models import ChatMessages
 from app.models.db.chats import ChatModel
+from app.providers.publisher import ChatCreatedEvent
+from app.providers.publisher import publish_to_queue
 from app.providers.redis import RedisConnection
 
 
@@ -13,8 +13,7 @@ async def create_chat_by_app(app_token: str) -> Chat:
     key = _get_app_chats_count_key(app_token)
     count = await redis.incr(key)
     chat = Chat(number=count, app_token=app_token)
-    # TODO: pass message queue
-    await ChatModel.create_chat(chat)
+    await publish_to_queue(ChatCreatedEvent(**chat.model_dump()))
     return chat
 
 

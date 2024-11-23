@@ -7,6 +7,7 @@ services:
       context: .
     restart: always
     depends_on:
+      - rabbitmq
       - db
       - redis
     ports:
@@ -17,6 +18,8 @@ services:
       - DATABASE_NAME=chat
       - DATABASE_USER=root
       - DATABASE_PASSWORD=123456
+      - RABBIT_MQ_HOST=rabbitmq
+      - RABBIT_MQ_PORT=5672
     volumes:
      - ./:/app
 
@@ -30,6 +33,7 @@ services:
       - MYSQL_DATABASE=chat
     volumes:
       - ./:/app
+
   redis:
     image: redis:latest
     container_name: chat-redis
@@ -38,3 +42,34 @@ services:
     volumes:
       - ./:/app
     command: ["redis-server", "--appendonly", "yes"]
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: chat-rabbitmq
+    ports:
+      - "5672:5672" # RabbitMQ message broker port
+      - "15672:15672" # Management console port
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - ./:/app
+  consumer:
+    container_name: chat-consumer
+    build:
+      context: .
+      dockerfile: Dockerfile_consumer
+    restart: always
+    depends_on:
+      - rabbitmq
+      - db
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=3306
+      - DATABASE_NAME=chat
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=123456
+      - RABBIT_MQ_HOST=rabbitmq
+      - RABBIT_MQ_PORT=5672
+    volumes:
+     - ./:/app

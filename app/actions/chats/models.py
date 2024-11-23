@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 from typing import Optional
 
 from app.actions.messages.model import Message
@@ -14,9 +15,8 @@ class Chat(BaseModel):
 
 
 class ChatMessages(BaseModel):
-    body: str
-    number: int
-    app_token: str
+    chat: Optional[Chat]
+    messages: List[Message]
 
 
 class ChatCreate(BaseModel):
