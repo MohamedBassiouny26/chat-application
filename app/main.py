@@ -29,3 +29,8 @@ app.include_router(
     prefix="/chats",
     tags=["chats"],
 )
+app.include_router(
+    routers.messages,
+    prefix="/messages",
+    tags=["messages"],
+)

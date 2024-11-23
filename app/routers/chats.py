@@ -1,7 +1,5 @@
 from http import HTTPStatus
 
-from app.actions.applications.main import update_application
-from app.actions.applications.models import ApplicationUpdate
 from app.actions.chats.main import create_chat_by_app
 from app.actions.chats.models import ChatCreate
 from app.models.db.chats import ChatModel
@@ -17,12 +15,8 @@ router = APIRouter()
 
 @router.post("/", status_code=HTTPStatus.CREATED)
 async def create_chat(chat: ChatCreate):
-    return await create_chat_by_app(chat.app_token)
-
-
-@router.patch("/{app_token}")
-async def update_app(app_token: str, application_update: ApplicationUpdate):
-    return await update_application(app_token, application_update)
+    chat = await create_chat_by_app(chat.app_token)
+    return chat.model_dump(exclude=["id", "created_at", "updated_at"])
 
 
 # FIXME: this should be removed just for testing

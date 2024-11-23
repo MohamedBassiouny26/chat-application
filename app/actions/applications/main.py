@@ -6,7 +6,7 @@ from app.actions.applications.models import ApplicationUpdate
 from app.models.db.applications import ApplicationModel
 
 
-async def add_application(name: str) -> Application:
+async def create_application(name: str) -> Application:
     token = str(uuid.uuid4())
     app = Application(name=name, token=token)
     await ApplicationModel.add_application(app)

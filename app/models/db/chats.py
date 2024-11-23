@@ -3,6 +3,8 @@ from typing import List
 from typing import Optional
 
 from app.actions.chats.models import Chat
+from app.actions.chats.models import ChatMessages
+from app.models.db.messages import message_table
 from app.providers.db import db
 from app.providers.db import metadata
 from sqlalchemy import Column
@@ -10,6 +12,7 @@ from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy import func
 from sqlalchemy import Integer
+from sqlalchemy import select
 from sqlalchemy import String
 from sqlalchemy import Table
 
@@ -38,10 +41,18 @@ chat_table = Table(
 
 class ChatModel:
     @staticmethod
-    async def fetch_chats_by_app_token(app_token) -> List[Chat]:
-        query = chat_table.select().where(chat_table.c.app_token == app_token)
+    async def fetch_chats_by_app_token(app_token) -> List[ChatMessages]:
+        query = (
+            select(
+                chat_table.c.number, message_table.c.body, chat_table.c.app_token
+            )  # Specify columns explicitly
+            .join(message_table, message_table.c.chat_id == chat_table.c.id)
+            .where(chat_table.c.app_token == app_token)
+            .order_by(chat_table.c.created_at.desc())
+        )
         chats = await db.fetch_all(query=query)
-        return [Chat(**dict(chat)) for chat in chats]
+        print("chats", chats)
+        return [ChatMessages(**dict(chat)) for chat in chats]
 
     @staticmethod
     async def fetch_chat(app_token: str, number: int) -> Optional[Chat]:

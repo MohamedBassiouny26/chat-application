@@ -3,6 +3,7 @@ from logging.config import fileConfig
 from alembic import context
 from app.models.db.applications import application_table  # noqa
 from app.models.db.chats import chat_table  # noqa
+from app.models.db.messages import message_table  # noqa
 from app.providers.db import metadata
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool

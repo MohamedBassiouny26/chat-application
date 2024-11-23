@@ -1,11 +1,15 @@
 from http import HTTPStatus
+from typing import List
 
-from app.actions.applications.main import add_application
+from app.actions.applications.main import create_application
 from app.actions.applications.main import get_application_by_token
 from app.actions.applications.main import update_application
 from app.actions.applications.models import Application
 from app.actions.applications.models import ApplicationCreate
 from app.actions.applications.models import ApplicationUpdate
+from app.actions.chats.main import get_chats_by_app_token
+from app.actions.chats.models import Chat
+from app.actions.chats.models import ChatMessages
 from app.models.db.applications import ApplicationModel
 from fastapi import APIRouter
 from fastapi import HTTPException
@@ -18,15 +22,16 @@ async def fetch_app(app_token: str):
     return await get_application_by_token(app_token)
 
 
-@router.get("/{app_token}/chats", response_model=Application, status_code=HTTPStatus.OK)
+@router.get(
+    "/{app_token}/chats", response_model=List[ChatMessages], status_code=HTTPStatus.OK
+)
 async def fetch_app_chats(app_token: str):
-    # TODO: get all application chats using app_token
-    pass
+    return await get_chats_by_app_token(app_token)
 
 
 @router.post("/", status_code=HTTPStatus.CREATED, response_model=Application)
 async def create_app(application: ApplicationCreate):
-    return await add_application(application.name)
+    return await create_application(application.name)
 
 
 @router.patch("/{app_token}", response_model=Application)
