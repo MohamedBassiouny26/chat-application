@@ -8,6 +8,7 @@ services:
     restart: always
     depends_on:
       - db
+      - redis
     ports:
       - 8000:8000
     environment:
@@ -29,3 +30,11 @@ services:
       - MYSQL_DATABASE=chat
     volumes:
       - ./:/app
+  redis:
+    image: redis:latest
+    container_name: chat-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./:/app
+    command: ["redis-server", "--appendonly", "yes"]

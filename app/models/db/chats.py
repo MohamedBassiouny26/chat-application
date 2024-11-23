@@ -2,13 +2,12 @@ from operator import and_
 from typing import List
 from typing import Optional
 
-from app.actions.applications.models import Application
-from app.actions.applications.models import ApplicationUpdate
 from app.actions.chats.models import Chat
 from app.providers.db import db
 from app.providers.db import metadata
 from sqlalchemy import Column
 from sqlalchemy import DateTime
+from sqlalchemy import ForeignKey
 from sqlalchemy import func
 from sqlalchemy import Integer
 from sqlalchemy import String
@@ -18,7 +17,12 @@ chat_table = Table(
     "chats",
     metadata,
     Column("id", Integer, nullable=False, primary_key=True),
-    Column("app_token", String(200), nullable=False, unique=True),
+    Column(
+        "app_token",
+        String(200),
+        ForeignKey("applications.token", ondelete="CASCADE"),
+        nullable=False,
+    ),
     Column("number", Integer, nullable=False),
     Column("messages_count", Integer, nullable=True, default=0),
     Column("created_at", DateTime, nullable=False, server_default=func.now()),
