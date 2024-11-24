@@ -2,6 +2,7 @@
 
 This repository contains a scalable and modular chat application built using FastAPI. The application is designed for handling real-time chat features with an organized project structure for easy maintainability and extensibility.
 ## System Design
+![Alt text for the image](docs/chat-design.png)
 [View the project diagram](https://excalidraw.com/#json=tUaPcGE98dErpsxo6sb6G,00YrlzU1Hmq3e-GmId1D1A)
 ## Installation
 
