@@ -22,6 +22,8 @@ WORKDIR /app/
 
 COPY ./pyproject.toml ./poetry.lock* ./
 RUN poetry install
+
+RUN chmod +x bin/*
 COPY . .
 
 EXPOSE 8000
