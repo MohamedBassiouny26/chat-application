@@ -1,5 +1,6 @@
 from app import routers
 from app.providers.db import db
+from app.providers.elastic_search import ElasticSearch
 from app.providers.redis import RedisConnection
 from fastapi import FastAPI
 
@@ -8,6 +9,8 @@ app = FastAPI()
 
 @app.on_event("startup")
 async def startup():
+    await ElasticSearch.create_connection()
+    await ElasticSearch.create_index()
     await db.connect()
     await RedisConnection.create_connection()
 

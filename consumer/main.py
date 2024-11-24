@@ -10,6 +10,7 @@ from app.actions.messages.model import Message
 from app.models.db.chats import ChatModel
 from app.models.db.messages import MessageModel
 from app.providers.db import db
+from app.providers.elastic_search import ElasticSearch
 
 
 async def consume_message(event: IncomingMessage):
@@ -19,11 +20,12 @@ async def consume_message(event: IncomingMessage):
         event_name = json_event["event_name"]
         if event_name == "chats/new_message_created":
             message = Message(**json_event)
-            await MessageModel.create_message(
+            created_message = await MessageModel.create_message(
                 chat_id=message.chat_id,
                 body=message.body,
                 message_number=message.number,
             )
+            await ElasticSearch.add_message_index(created_message)
         elif event_name == "chats/new_chat_created":
             chat = Chat(**json_event)
             await ChatModel.create_chat(chat)
@@ -50,6 +52,8 @@ def start_consumer():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.run_until_complete(db.connect())
+    loop.run_until_complete(ElasticSearch.create_connection())
+    loop.run_until_complete(ElasticSearch.create_index())
     loop.run_until_complete(consume_from_queue())
 
 

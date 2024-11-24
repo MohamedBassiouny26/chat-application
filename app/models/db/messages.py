@@ -3,6 +3,7 @@ from typing import List
 from typing import Optional
 
 from app.actions.chats.models import Chat
+from app.actions.messages.model import Message
 from app.actions.messages.model import MessageCreate
 from app.providers.db import db
 from app.providers.db import metadata
@@ -49,4 +50,10 @@ class MessageModel:
         query = message_table.insert().values(
             chat_id=chat_id, body=body, number=message_number
         )
-        await db.execute(query)
+        count = await db.execute(query)
+        if count:
+            query = message_table.select().where(
+                message_table.c.number == message_number
+            )
+            result = await db.fetch_one(query)
+            return Message(**dict(result))

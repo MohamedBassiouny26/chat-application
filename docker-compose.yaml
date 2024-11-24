@@ -7,12 +7,16 @@ services:
       context: .
     restart: always
     depends_on:
+      - elasticsearch
       - rabbitmq
       - db
       - redis
     ports:
       - 8000:8000
     environment:
+      - ELASTIC_DOMAIN=elasticsearch
+      - ELASTIC_PROTOCOL=http
+      - ELASTIC_PORT=9200
       - DATABASE_HOST=db
       - DATABASE_PORT=3306
       - DATABASE_NAME=chat
@@ -54,6 +58,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=guest
     volumes:
       - ./:/app
+
   consumer:
     container_name: chat-consumer
     build:
@@ -61,6 +66,7 @@ services:
       dockerfile: Dockerfile_consumer
     restart: always
     depends_on:
+      - elasticsearch
       - rabbitmq
       - db
     environment:
@@ -71,5 +77,19 @@ services:
       - DATABASE_PASSWORD=123456
       - RABBIT_MQ_HOST=rabbitmq
       - RABBIT_MQ_PORT=5672
+      - ELASTIC_DOMAIN=elasticsearch
+      - ELASTIC_PROTOCOL=http
+      - ELASTIC_PORT=9200
     volumes:
      - ./:/app
+
+  elasticsearch:
+    container_name: elasticsearch
+    environment:
+      - xpack.security.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g # Adjust heap size as needed
+    image: elasticsearch:8.16.1
+    ports:
+      - 9200:9200

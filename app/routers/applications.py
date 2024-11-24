@@ -26,7 +26,10 @@ async def fetch_app(app_token: str):
     "/{app_token}/chats", response_model=List[ChatMessages], status_code=HTTPStatus.OK
 )
 async def fetch_app_chats(app_token: str):
-    return await get_chats_by_app_token(app_token)
+    app_chats = await get_chats_by_app_token(app_token)
+    return [
+        chat.model_dump(exclude_none=True, exclude_unset=True) for chat in app_chats
+    ]
 
 
 @router.post("/", status_code=HTTPStatus.CREATED, response_model=Application)
