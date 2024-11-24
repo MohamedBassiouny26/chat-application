@@ -18,7 +18,12 @@ application_table = Table(
     "applications",
     metadata,
     Column("id", Integer, nullable=False, primary_key=True),
-    Column("token", String(200), nullable=False, unique=True),
+    Column(
+        "token",
+        String(200),
+        nullable=False,
+        unique=True,
+    ),
     Column("name", String(200), nullable=False),
     Column("chats_count", Integer, nullable=False, server_default="0"),
     Column("created_at", DateTime, nullable=False, server_default=func.now()),

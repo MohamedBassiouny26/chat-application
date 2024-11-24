@@ -14,6 +14,7 @@ from sqlalchemy import func
 from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import Table
+from sqlalchemy import UniqueConstraint
 
 message_table = Table(
     "messages",
@@ -24,6 +25,7 @@ message_table = Table(
         Integer,
         ForeignKey("chats.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
     ),
     Column("number", Integer, nullable=False),
     Column("body", String(200), nullable=False),
@@ -35,6 +37,9 @@ message_table = Table(
         server_default=func.now(),
         onupdate=func.now(),
     ),
+    UniqueConstraint(
+        "chat_id", "number", name="uq_chat_id_number"
+    ),  # Composite unique constraint
 )
 
 

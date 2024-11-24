@@ -8,7 +8,6 @@ from app.actions.applications.models import Application
 from app.actions.applications.models import ApplicationCreate
 from app.actions.applications.models import ApplicationUpdate
 from app.actions.chats.main import get_chats_by_app_token
-from app.actions.chats.models import Chat
 from app.actions.chats.models import ChatMessages
 from app.models.db.applications import ApplicationModel
 from fastapi import APIRouter

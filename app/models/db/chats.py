@@ -17,6 +17,7 @@ from sqlalchemy import Integer
 from sqlalchemy import select
 from sqlalchemy import String
 from sqlalchemy import Table
+from sqlalchemy import UniqueConstraint
 
 chat_table = Table(
     "chats",
@@ -27,8 +28,9 @@ chat_table = Table(
         String(200),
         ForeignKey("applications.token", ondelete="CASCADE"),
         nullable=False,
+        index=True,
     ),
-    Column("number", Integer, nullable=False),
+    Column("number", Integer, nullable=False, index=True),
     Column("messages_count", Integer, nullable=True, default=0),
     Column("created_at", DateTime, nullable=False, server_default=func.now()),
     Column(
@@ -38,6 +40,9 @@ chat_table = Table(
         server_default=func.now(),
         onupdate=func.now(),
     ),
+    UniqueConstraint(
+        "app_token", "number", name="uq_app_token_number"
+    ),  # Composite unique constraint
 )
 
 
