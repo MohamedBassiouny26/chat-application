@@ -14,7 +14,7 @@ This repository contains a scalable and modular chat application built using Fas
 
 2. Make bin files executable 
    ```bash
-   poetry install
+   chmod +x bin/*
    ```
 
 3. Build and start the services using Docker Compose:
