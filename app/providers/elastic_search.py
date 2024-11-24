@@ -16,6 +16,7 @@ class ElasticSearch:
             health = await ElasticSearch.__CONNECTION__.cluster.health()
         except Exception as e:
             print("Error connecting to Elasticsearch:", e)
+            raise e
         return ElasticSearch.__CONNECTION__
 
     @staticmethod

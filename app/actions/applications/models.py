@@ -9,6 +9,7 @@ class Application(BaseModel):
     token: str
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    chats_count: Optional[int] = None
 
 
 class ApplicationUpdate(BaseModel):

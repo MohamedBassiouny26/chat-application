@@ -10,11 +10,11 @@ fi
 host=$1
 port=$2
 
-# Function to test TCP connection with a timeout of 300ms
+# Function to test TCP connection using /dev/tcp
 test_connection() {
     local host=$1
     local port=$2
-    nc -z -w 3.3 $host $port &>/dev/null
+    timeout 3 bash -c "cat < /dev/null > /dev/tcp/$host/$port" &>/dev/null
     return $?
 }
 
@@ -38,3 +38,9 @@ echo "Connection to $host:$port successful."
 echo "The service at $host:$port is reachable. Starting the application..."
 # Replace the following with the command to start your application
 # ./your-application-start-command
+
+# Wait 3 seconds before exiting
+echo "Waiting for 3 seconds before exiting..."
+sleep 3
+
+echo "Script completed."

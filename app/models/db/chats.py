@@ -105,3 +105,21 @@ class ChatModel:
         query = chat_table.select()
         chats = await db.fetch_all(query=query)
         return [Chat(**dict(chat)) for chat in chats]
+
+    @staticmethod
+    async def update_messages_count_col():
+        subquery = (
+            select(
+                message_table.c.chat_id.label("chat_id"),
+                func.count().label("messages_count"),
+            )
+            .group_by(message_table.c.chat_id)
+            .subquery()
+        )
+
+        update_query = (
+            chat_table.update()
+            .values(messages_count=subquery.c.messages_count)
+            .where(chat_table.c.id == subquery.c.chat_id)
+        )
+        await db.execute(update_query)

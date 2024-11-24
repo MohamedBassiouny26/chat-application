@@ -34,7 +34,8 @@ async def fetch_app_chats(app_token: str):
 
 @router.post("/", status_code=HTTPStatus.CREATED, response_model=Application)
 async def create_app(application: ApplicationCreate):
-    return await create_application(application.name)
+    application = await create_application(application.name)
+    return application.model_dump(exclude_none=True, exclude_unset=True)
 
 
 @router.patch("/{app_token}", response_model=Application)

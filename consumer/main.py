@@ -53,7 +53,6 @@ def start_consumer():
     asyncio.set_event_loop(loop)
     loop.run_until_complete(db.connect())
     loop.run_until_complete(ElasticSearch.create_connection())
-    loop.run_until_complete(ElasticSearch.create_index())
     loop.run_until_complete(consume_from_queue())
 
 

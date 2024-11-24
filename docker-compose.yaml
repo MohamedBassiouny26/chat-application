@@ -69,6 +69,7 @@ services:
       - elasticsearch
       - rabbitmq
       - db
+      - api
     environment:
       - DATABASE_HOST=db
       - DATABASE_PORT=3306
@@ -93,3 +94,20 @@ services:
     image: elasticsearch:8.16.1
     ports:
       - 9200:9200
+
+  jobs:
+    container_name: chat-jobs
+    build:
+      context: .
+      dockerfile: Dockerfile_scheduler
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=3306
+      - DATABASE_NAME=chat
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=123456
+    volumes:
+     - ./:/app
