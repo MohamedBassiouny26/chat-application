@@ -1,7 +1,9 @@
 from typing import List
 
+from app.actions.applications.exceptions import ApplicationNotFound
 from app.actions.chats.models import Chat
 from app.actions.chats.models import ChatMessages
+from app.models.db.applications import ApplicationModel
 from app.models.db.chats import ChatModel
 from app.providers.publisher import ChatCreatedEvent
 from app.providers.publisher import publish_to_queue
@@ -10,6 +12,9 @@ from app.providers.redis import RedisConnection
 
 async def create_chat_by_app(app_token: str) -> Chat:
     redis = await RedisConnection.create_connection()
+    application = await ApplicationModel.fetch_application(app_token)
+    if not application:
+        raise ApplicationNotFound
     key = _get_app_chats_count_key(app_token)
     count = await redis.incr(key)
     chat = Chat(number=count, app_token=app_token)

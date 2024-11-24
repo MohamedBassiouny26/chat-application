@@ -1,19 +1,23 @@
 from http import HTTPStatus
-from http.client import HTTPException
 
+from app.actions.chats.exceptions import ChatNotFoundException
 from app.actions.messages.main import create_message as create_message_action
 from app.actions.messages.model import MessageCreate
 from app.models.db.chats import ChatModel
 from app.providers.elastic_search import ElasticSearch
 from fastapi import APIRouter
+from fastapi import HTTPException
 
 router = APIRouter()
 
 
 @router.post("/", status_code=HTTPStatus.CREATED)
 async def create_message(message: MessageCreate):
-    message = await create_message_action(message)
-    return message.model_dump(exclude=["id", "chat_id"])
+    try:
+        message = await create_message_action(message)
+        return message.model_dump(exclude=["id", "chat_id"])
+    except ChatNotFoundException:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Chat not found")
 
 
 @router.get("/search/{app_token}/chat_number")
